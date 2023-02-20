@@ -1,4 +1,5 @@
 import Inquirer from "inquirer";
+import chalk from "chalk";
 
 interface UserInput {
 
@@ -6,6 +7,16 @@ interface UserInput {
     operator: string,
     second_num: number,
 }
+
+console.log(chalk.blue(`
+
+------------------------------------------
+
+                CALCULATOR
+
+------------------------------------------
+
+`));
 
 const userInput: UserInput = await Inquirer.prompt([
     {
@@ -40,22 +51,22 @@ const calculate = (input_data: UserInput) => {
 
     if (operator === "+") {
         result = first_num + second_num
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return
     }
     if (operator === "-") {
         result = first_num - second_num
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return
     }
     if (operator === "*") {
         result = first_num * second_num
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return
     }
     if (operator === "/") {
         result = first_num / second_num
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return
     }
 

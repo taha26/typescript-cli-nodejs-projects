@@ -1,4 +1,14 @@
 import Inquirer from "inquirer";
+import chalk from "chalk";
+console.log(chalk.blue(`
+
+------------------------------------------
+
+                CALCULATOR
+
+------------------------------------------
+
+`));
 const userInput = await Inquirer.prompt([
     {
         name: "first_num",
@@ -26,22 +36,22 @@ const calculate = (input_data) => {
     let result = 0;
     if (operator === "+") {
         result = first_num + second_num;
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return;
     }
     if (operator === "-") {
         result = first_num - second_num;
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return;
     }
     if (operator === "*") {
         result = first_num * second_num;
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return;
     }
     if (operator === "/") {
         result = first_num / second_num;
-        console.log(`Result : ${result}`);
+        console.log(`Result : ${chalk.green(result)}`);
         return;
     }
 };
