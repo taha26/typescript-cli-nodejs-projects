@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import Inquirer from "inquirer";
 import chalk from "chalk";
 console.log(chalk.blue(`
