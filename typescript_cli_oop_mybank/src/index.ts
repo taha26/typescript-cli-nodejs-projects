@@ -19,17 +19,17 @@ class BankAccount {
         this.accountNumber = ++BankAccount.generateAccNumber
     }
 
-    public Debit(amount: number): number {
-        return this.accountBalance -= amount
+    public Debit(amount: number) {
+        this.accountBalance -= amount
     }
 
-    public Credit(amount: number): number {
+    public Credit(amount: number) {
 
         if (amount > 100) {
-            return this.accountBalance += amount - 1
+            this.accountBalance += amount - 1
         }
         else {
-            return this.accountBalance += amount
+            this.accountBalance += amount
         }
     }
 }
@@ -50,20 +50,11 @@ class Customer {
     }
 }
 
-
-// const cus = new Customer("taha", 12, 12, "12");
-// console.log(cus.name);
-// console.log(cus.bankAccount.accountBalance);
-// console.log(cus.bankAccount.Credit(50));
-// console.log(cus.bankAccount.Debit(20));
-// console.log(cus.bankAccount.accountBalance);
-
-
 (async () => {
     let status = true
     const customers: Customer[] = []
-    while (status) {
 
+    while (status) {
         const { userInput }: { userInput: "Create an account" | "Login to an account" | "Quit" } = await Inquirer.prompt([
             {
                 name: "userInput",
@@ -75,6 +66,7 @@ class Customer {
 
         if (userInput === "Quit") {
             status = false
+            console.log(chalk.blue(`\n -------- Thank you..! Have a nice day. -------- \n`));
         }
 
         if (userInput === "Create an account") {
@@ -129,7 +121,6 @@ class Customer {
                     }
                 },
             ])
-
             let addCustomer = new Customer(name, age, pin, userId)
             customers.push(addCustomer);
             console.log(chalk.green(`\nAccount Created.\n`));
@@ -169,26 +160,29 @@ class Customer {
                 break
             }
 
-            const { name, age, bankAccount: { accountBalance, accountNumber, Credit, Debit } } = customers.find((data) => data.pin === pin && data.userId === userId) as Customer
+            const { name, age, bankAccount } = customers.find((data) => data.pin === pin && data.userId === userId) as Customer
 
             if (!name && !userId) {
                 console.log(chalk.red(`\nInvalid inputs.\n`));
                 break
             }
 
+            console.log(chalk.green(`\nLogin successfully.\n`));
+
             let loginStatus = true
             while (loginStatus) {
-                const { loginOptions }: { loginOptions: "Account Information" | "Debit" | "Credit" | "Quit" } = await Inquirer.prompt([
+                const { loginOptions }: { loginOptions: "Account Information" | "Debit" | "Credit" | "Logout" } = await Inquirer.prompt([
                     {
                         name: "loginOptions",
                         message: "Select an option : ",
                         type: "list",
-                        choices: ["Account Information", "Debit", "Credit", "Quit"]
+                        choices: ["Account Information", "Debit", "Credit", "Logout"]
                     },
                 ])
 
-                if (loginOptions === "Quit") {
+                if (loginOptions === "Logout") {
                     loginStatus = false
+                    console.log(chalk.green(`\nLogout successfully.\n`));
                     continue
                 }
 
@@ -197,71 +191,60 @@ class Customer {
                     console.log(chalk.whiteBright(`Name            : ${name}`))
                     console.log(chalk.whiteBright(`Age             : ${age}`))
                     console.log(chalk.whiteBright(`UserID          : ${userId}`))
-                    console.log(chalk.whiteBright(`Account Balance : Rs: ${accountBalance}`))
-                    console.log(chalk.whiteBright(`Account Number  : ${accountNumber}`))
+                    console.log(chalk.whiteBright(`Account Balance : Rs: ${bankAccount.accountBalance}`))
+                    console.log(chalk.whiteBright(`Account Number  : ${bankAccount.accountNumber}`))
                     console.log(chalk.whiteBright(`--------------------------------------\n`))
                     continue
                 }
 
                 if (loginOptions === "Credit") {
-                    try {
-
-                        const { amount }: { amount: number } = await Inquirer.prompt([{
-                            name: 'amount',
-                            message: 'Enter an amount : ',
-                            type: 'number',
-                            validate: (result: number) => {
-                                if (!result) {
-                                    return "Wrong input..!"
-                                } else {
-                                    return true
-                                }
+                    const { amount }: { amount: number } = await Inquirer.prompt([{
+                        name: 'amount',
+                        message: 'Enter an amount : ',
+                        type: 'number',
+                        validate: (result: number) => {
+                            if (!result) {
+                                return "Wrong input..!"
+                            } else {
+                                return true
                             }
-                        }])
-                        const credit = Credit(amount)
-                        console.log(credit);
+                        }
+                    }])
 
+                    if (amount > 100) {
+                        bankAccount.Credit(amount)
                         console.log(chalk.green(`\nCredited successfully\n`));
+                        console.log(chalk.yellow(`Rs:1 fee charged on every transaction above Rs:100 ...!\n`));
                         continue
                     }
-                    catch (err) {
-                        console.log(err);
-
-                    }
+                    bankAccount.Credit(amount)
+                    console.log(chalk.green(`\nCredited successfully\n`));
+                    continue
                 }
 
                 if (loginOptions === "Debit") {
-                    try {
-
-                        const { amount }: { amount: number } = await Inquirer.prompt([{
-                            name: 'amount',
-                            message: 'Enter an amount : ',
-                            type: 'number',
-                            validate: (result: number) => {
-                                if (!result) {
-                                    return "Wrong input..!"
-                                } else {
-                                    return true
-                                }
+                    const { amount }: { amount: number } = await Inquirer.prompt([{
+                        name: 'amount',
+                        message: 'Enter an amount : ',
+                        type: 'number',
+                        validate: (result: number) => {
+                            if (!result) {
+                                return "Wrong input..!"
+                            } else {
+                                return true
                             }
-                        }])
-
-                        if (amount > accountBalance) {
-                            console.log(chalk.green(`\nInsufficient balance...!\n`));
-                            continue
                         }
+                    }])
 
-                        const debit = Debit(amount)
-                        console.log(chalk.green(`\nDebited successfully...!\n`));
+                    if (amount > bankAccount.accountBalance) {
+                        console.log(chalk.green(`\nInsufficient balance...!\n`));
                         continue
                     }
-                    catch (err) {
-                        console.log(err);
-
-                    }
+                    bankAccount.Debit(amount)
+                    console.log(chalk.green(`\nDebited successfully...!\n`));
+                    continue
                 }
             }
-
         }
     }
 })()
